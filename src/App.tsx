@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from "react";
-import type { WordReaderState } from "./types";
+import type { OpenedFile, WordReaderState } from "./types";
 import { useSettings } from "./hooks/useSettings";
 import { useAutoAdvance } from "./hooks/useAutoAdvance";
 import { WordDisplay } from "./components/WordDisplay";
@@ -49,6 +49,7 @@ export default function App() {
     currentIndex: 0,
     isPlaying: false,
   });
+  const [currentFileName, setCurrentFileName] = useState("");
   const { settings, updateSettings } = useSettings();
 
   const advanceWord = useCallback(() => {
@@ -68,9 +69,10 @@ export default function App() {
     onTick: advanceWord,
   });
 
-  const handleFileLoaded = useCallback((content: string) => {
-    const words = parseWords(content);
+  const handleFileLoaded = useCallback((file: OpenedFile) => {
+    const words = parseWords(file.content);
     setState({ words, currentIndex: 0, isPlaying: true });
+    setCurrentFileName(file.fileName);
   }, []);
 
   const handleBack10 = useCallback(() => {
@@ -178,6 +180,11 @@ export default function App() {
   return (
     <div className="app" style={adaptiveVars}>
       <div className="word-area">
+        {currentFileName && (
+          <div className="current-file-name" style={{ color: settings.textColor }} title={currentFileName}>
+            {currentFileName}
+          </div>
+        )}
         <WordDisplay
           word={currentWord}
           fontSize={settings.fontSize}

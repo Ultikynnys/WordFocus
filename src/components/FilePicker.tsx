@@ -1,5 +1,7 @@
+import type { OpenedFile } from "../types";
+
 interface FilePickerProps {
-  onFileLoaded: (content: string) => void;
+  onFileLoaded: (file: OpenedFile) => void;
   hasFile: boolean;
 }
 
@@ -7,9 +9,9 @@ export function FilePicker({ onFileLoaded, hasFile }: FilePickerProps) {
   const handleOpenFile = async () => {
     try {
       const { invoke } = await import("@tauri-apps/api/core");
-      const content = await invoke<string>("open_file");
-      if (content) {
-        onFileLoaded(content);
+      const file = await invoke<OpenedFile>("open_file");
+      if (file.content) {
+        onFileLoaded(file);
       }
     } catch (err) {
       console.error("Failed to open file:", err);

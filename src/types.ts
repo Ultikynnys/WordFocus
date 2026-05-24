@@ -13,3 +13,8 @@ export interface WordReaderState {
   currentIndex: number;
   isPlaying: boolean;
 }
+
+export interface OpenedFile {
+  content: string;
+  fileName: string;
+}

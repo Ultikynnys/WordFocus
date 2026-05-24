@@ -39,6 +39,21 @@ body {
   justify-content: center;
   min-height: 0;
   gap: 8px;
+  position: relative;
+}
+
+.current-file-name {
+  position: absolute;
+  top: 16px;
+  right: 20px;
+  max-width: min(40vw, 420px);
+  font-size: 12px;
+  line-height: 1.2;
+  opacity: 0.5;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  pointer-events: none;
 }
 
 .word-display {

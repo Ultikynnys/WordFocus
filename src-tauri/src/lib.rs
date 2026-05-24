@@ -1,5 +1,12 @@
 use std::path::Path;
 
+#[derive(serde::Serialize)]
+#[serde(rename_all = "camelCase")]
+struct OpenedFile {
+    content: String,
+    file_name: String,
+}
+
 fn log_backend_error(context: &str, error: &str) {
     eprintln!("[backend] {}: {}", context, error);
 }
@@ -9,7 +16,7 @@ fn log_backend_info(message: &str) {
 }
 
 #[tauri::command]
-fn open_file(app: tauri::AppHandle) -> Result<String, String> {
+fn open_file(app: tauri::AppHandle) -> Result<OpenedFile, String> {
     use tauri_plugin_dialog::DialogExt;
 
     let file = app
@@ -46,7 +53,14 @@ fn open_file(app: tauri::AppHandle) -> Result<String, String> {
                 log_backend_error("open_file", error);
             }
 
-            result
+            result.map(|content| OpenedFile {
+                content,
+                file_name: path_buf
+                    .file_name()
+                    .and_then(|name| name.to_str())
+                    .unwrap_or("Unknown file")
+                    .to_string(),
+            })
         }
         None => {
             let error = "No file selected".to_string();
