@@ -1,18 +1,125 @@
-use std::path::Path;
+use std::{
+    collections::HashMap,
+    fs,
+    path::{Path, PathBuf},
+    sync::OnceLock,
+};
+
+static DEBUG_CONSOLE_ENABLED: OnceLock<bool> = OnceLock::new();
+
+#[derive(serde::Serialize, serde::Deserialize, Default)]
+#[serde(rename_all = "camelCase")]
+struct ReadingStateStore {
+    files: HashMap<String, usize>,
+}
 
 #[derive(serde::Serialize)]
 #[serde(rename_all = "camelCase")]
 struct OpenedFile {
     content: String,
     file_name: String,
+    file_path: String,
+    resume_index: usize,
+}
+
+fn debug_console_enabled() -> bool {
+    *DEBUG_CONSOLE_ENABLED.get_or_init(|| {
+        let enabled = std::env::args().any(|arg| arg == "-d" || arg == "-debug");
+        #[cfg(target_os = "windows")]
+        if enabled {
+            attach_debug_console();
+        }
+        enabled
+    })
+}
+
+#[cfg(target_os = "windows")]
+fn attach_debug_console() {
+    use windows_sys::Win32::System::Console::{
+        AllocConsole, AttachConsole, ATTACH_PARENT_PROCESS,
+    };
+
+    unsafe {
+        if AttachConsole(ATTACH_PARENT_PROCESS) == 0 {
+            let _ = AllocConsole();
+        }
+    }
+}
+
+fn debug_log(message: &str) {
+    if !debug_console_enabled() {
+        return;
+    }
+
+    #[cfg(target_os = "windows")]
+    write_windows_console(message);
+
+    #[cfg(not(target_os = "windows"))]
+    println!("{}", message);
+}
+
+#[cfg(target_os = "windows")]
+fn write_windows_console(message: &str) {
+    use windows_sys::Win32::System::Console::{
+        GetStdHandle, WriteConsoleW, STD_OUTPUT_HANDLE,
+    };
+
+    let mut utf16: Vec<u16> = message.encode_utf16().collect();
+    utf16.push('\n' as u16);
+
+    unsafe {
+        let handle = GetStdHandle(STD_OUTPUT_HANDLE);
+        if handle.is_null() || handle == (-1_isize) as *mut std::ffi::c_void {
+            return;
+        }
+
+        let mut written = 0;
+        let _ = WriteConsoleW(
+            handle,
+            utf16.as_ptr() as _,
+            utf16.len() as u32,
+            &mut written,
+            std::ptr::null_mut(),
+        );
+    }
 }
 
 fn log_backend_error(context: &str, error: &str) {
-    eprintln!("[backend] {}: {}", context, error);
+    debug_log(&format!("[backend] {}: {}", context, error));
 }
 
 fn log_backend_info(message: &str) {
-    println!("[backend] {}", message);
+    debug_log(&format!("[backend] {}", message));
+}
+
+fn reading_state_path() -> PathBuf {
+    std::env::temp_dir().join("word-focus-reading-state.json")
+}
+
+fn load_reading_state_store() -> ReadingStateStore {
+    let path = reading_state_path();
+    let content = match fs::read_to_string(path) {
+        Ok(content) => content,
+        Err(_) => return ReadingStateStore::default(),
+    };
+
+    serde_json::from_str(&content).unwrap_or_default()
+}
+
+fn save_reading_state_store(store: &ReadingStateStore) -> Result<(), String> {
+    let path = reading_state_path();
+    let content = serde_json::to_string(store)
+        .map_err(|error| format!("Failed to serialize reading state: {}", error))?;
+
+    fs::write(path, content).map_err(|error| format!("Failed to write reading state: {}", error))
+}
+
+fn load_saved_index(file_path: &str) -> usize {
+    load_reading_state_store()
+        .files
+        .get(file_path)
+        .copied()
+        .unwrap_or(0)
 }
 
 #[tauri::command]
@@ -37,6 +144,7 @@ fn open_file(app: tauri::AppHandle) -> Result<OpenedFile, String> {
                 .and_then(|e| e.to_str())
                 .unwrap_or("")
                 .to_lowercase();
+            let file_path = path_buf.to_string_lossy().to_string();
 
             log_backend_info(&format!("Opening file: {}", path_buf.display()));
 
@@ -60,6 +168,8 @@ fn open_file(app: tauri::AppHandle) -> Result<OpenedFile, String> {
                     .and_then(|name| name.to_str())
                     .unwrap_or("Unknown file")
                     .to_string(),
+                file_path: file_path.clone(),
+                resume_index: load_saved_index(&file_path),
             })
         }
         None => {
@@ -72,7 +182,14 @@ fn open_file(app: tauri::AppHandle) -> Result<OpenedFile, String> {
 
 #[tauri::command]
 fn log_frontend_error(message: String) {
-    eprintln!("[frontend] {}", message);
+    debug_log(&format!("[frontend] {}", message));
+}
+
+#[tauri::command]
+fn save_reading_state(file_path: String, current_index: usize) -> Result<(), String> {
+    let mut store = load_reading_state_store();
+    store.files.insert(file_path, current_index);
+    save_reading_state_store(&store)
 }
 
 fn extract_epub_text(path: &Path) -> Result<String, String> {
@@ -168,18 +285,24 @@ fn strip_html(html: &str) -> String {
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
+    let debug_console = debug_console_enabled();
+
     std::panic::set_hook(Box::new(|panic_info| {
-        eprintln!("[backend panic] {}", panic_info);
+        debug_log(&format!("[backend panic] {}", panic_info));
     }));
+
+    if debug_console {
+        log_backend_info("Debug console enabled via -d/-debug");
+    }
 
     let app = tauri::Builder::default()
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_fs::init())
-        .invoke_handler(tauri::generate_handler![open_file, log_frontend_error])
+        .invoke_handler(tauri::generate_handler![open_file, log_frontend_error, save_reading_state])
         .run(tauri::generate_context!());
 
     if let Err(error) = app {
-        eprintln!("[backend startup] error while running tauri application: {}", error);
+        debug_log(&format!("[backend startup] error while running tauri application: {}", error));
         panic!("error while running tauri application: {}", error);
     }
 }

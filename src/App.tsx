@@ -50,6 +50,7 @@ export default function App() {
     isPlaying: false,
   });
   const [currentFileName, setCurrentFileName] = useState("");
+  const [currentFilePath, setCurrentFilePath] = useState("");
   const { settings, updateSettings } = useSettings();
 
   const advanceWord = useCallback(() => {
@@ -71,8 +72,11 @@ export default function App() {
 
   const handleFileLoaded = useCallback((file: OpenedFile) => {
     const words = parseWords(file.content);
-    setState({ words, currentIndex: 0, isPlaying: true });
+    const resumeIndex = Math.min(Math.max(0, file.resumeIndex), Math.max(0, words.length - 1));
+    const shouldResume = resumeIndex > 0 && words.length > 0;
+    setState({ words, currentIndex: resumeIndex, isPlaying: !shouldResume && words.length > 0 });
     setCurrentFileName(file.fileName);
+    setCurrentFilePath(file.filePath);
   }, []);
 
   const handleBack10 = useCallback(() => {
@@ -103,6 +107,14 @@ export default function App() {
     setState((prev) => ({ ...prev, currentIndex: 0, isPlaying: false }));
   }, []);
 
+  const handleSeek = useCallback((targetIndex: number) => {
+    setState((prev) => ({
+      ...prev,
+      currentIndex: Math.min(Math.max(0, targetIndex), Math.max(0, prev.words.length - 1)),
+      isPlaying: false,
+    }));
+  }, []);
+
   const togglePlay = useCallback(() => {
     setState((prev) => {
       if (prev.words.length === 0) return prev;
@@ -116,6 +128,32 @@ export default function App() {
   useEffect(() => {
     document.documentElement.style.backgroundColor = settings.bgColor;
   }, [settings.bgColor]);
+
+  useEffect(() => {
+    if (!currentFilePath || state.words.length === 0) {
+      return;
+    }
+
+    let isCancelled = false;
+
+    void (async () => {
+      try {
+        const { invoke } = await import("@tauri-apps/api/core");
+        if (!isCancelled) {
+          await invoke("save_reading_state", {
+            filePath: currentFilePath,
+            currentIndex: state.currentIndex,
+          });
+        }
+      } catch (error) {
+        console.error("Failed to save reading state:", error);
+      }
+    })();
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [currentFilePath, state.currentIndex, state.words.length]);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -212,6 +250,8 @@ export default function App() {
             onForward10={handleForward10}
             onForward50={handleForward50}
             onReset={handleReset}
+            onSeek={handleSeek}
+            maxWordNumber={state.words.length}
           />
         </div>
         <SettingsPanel settings={settings} onUpdateSettings={updateSettings} />

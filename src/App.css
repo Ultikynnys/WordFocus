@@ -186,6 +186,8 @@ body {
 .nav-buttons {
   display: flex;
   gap: 4px;
+  align-items: center;
+  flex-wrap: wrap;
 }
 
 .nav-buttons button {
@@ -199,9 +201,34 @@ body {
   transition: background 0.15s, color 0.15s;
 }
 
+.nav-buttons button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
 .nav-buttons button:hover {
   background: var(--surface-hover);
   color: var(--text-primary);
+}
+
+.seek-controls {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.seek-controls input {
+  width: 88px;
+  padding: 5px 8px;
+  font-size: 12px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--input-surface, var(--surface));
+  color: var(--text-primary);
+}
+
+.seek-controls input:disabled {
+  opacity: 0.45;
 }
 
 .settings-panel {

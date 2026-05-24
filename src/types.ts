@@ -17,4 +17,6 @@ export interface WordReaderState {
 export interface OpenedFile {
   content: string;
   fileName: string;
+  filePath: string;
+  resumeIndex: number;
 }

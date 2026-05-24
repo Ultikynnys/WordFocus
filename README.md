@@ -1,6 +1,9 @@
 # WordFocus
 
 [![Build Status](https://github.com/Ultikynnys/WordFocus/actions/workflows/build.yml/badge.svg)](https://github.com/Ultikynnys/WordFocus/actions/workflows/build.yml)
+![Windows](https://img.shields.io/badge/Windows-supported-0078D6?logo=windows&logoColor=white)
+![Linux](https://img.shields.io/badge/Linux-supported-FCC624?logo=linux&logoColor=black)
+![macOS](https://img.shields.io/badge/macOS-supported-000000?logo=apple&logoColor=white)
 
 WordFocus is a desktop speed-reading app built with Tauri, React, TypeScript, and Rust.
 
@@ -32,10 +35,12 @@ The app currently supports:
 - Adjustable font size, text color, background color, stroke color, and stroke width
 - Back 10 / Back 50 navigation
 - Skip 10 / Skip 50 navigation
+- Seek directly to a specific word number
 - Reset to the beginning
 - EPUB and PDF text extraction in the desktop backend
+- Per-file reading progress saved in local temporary storage for later resume
 - Cross-platform desktop build output for Windows, Linux, and macOS
-- Console logging for frontend and backend failures
+- Optional debug console logging when launched with `-d` or `-debug`
 - Manually triggered GitHub Actions build verification across Windows, Linux, and macOS
 
 ## Why This Exists
@@ -96,6 +101,8 @@ Windows: src-tauri/target/release/word-focus.exe
 Linux:   src-tauri/target/release/word-focus
 macOS:   src-tauri/target/release/word-focus
 ```
+
+On Windows, the release app runs without a console by default. Launch it with `-d` or `-debug` to attach a debug console for frontend/backend error output.
 
 ## License
 
