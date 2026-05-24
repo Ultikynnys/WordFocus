@@ -1,9 +1,9 @@
 # WordFocus
 
 [![Build Status](https://github.com/Ultikynnys/WordFocus/actions/workflows/build.yml/badge.svg)](https://github.com/Ultikynnys/WordFocus/actions/workflows/build.yml)
-![Windows Build](https://img.shields.io/badge/Windows-passing-0078D6?logo=windows&logoColor=white)
-![Linux Build](https://img.shields.io/badge/Linux-passing-FCC624?logo=linux&logoColor=black)
-![macOS Build](https://img.shields.io/badge/macOS-passing-000000?logo=apple&logoColor=white)
+![Windows](https://img.shields.io/badge/Windows-supported-0078D6?logo=windows&logoColor=white)
+![Linux](https://img.shields.io/badge/Linux-supported-FCC624?logo=linux&logoColor=black)
+![macOS](https://img.shields.io/badge/macOS-supported-000000?logo=apple&logoColor=white)
 
 WordFocus is a desktop speed-reading app built with Tauri, React, TypeScript, and Rust.
 
