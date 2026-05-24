@@ -7,7 +7,7 @@
 
 WordFocus is a desktop speed-reading app built with Tauri, React, TypeScript, and Rust.
 
-The idea came from a Reddit video where someone claimed you can read faster if you only focus on a single word at a time. This project exists to test that theory in a simple, repeatable way. I am actively using it to see whether those claims actually hold up in practice.
+The idea came from a Reddit video where someone claimed you can read faster if you only focus on a single word at a time. This project exists to test that theory in a simple, repeatable way. In practice, WordFocus displays short text chunks rather than strict single words, because very short words are merged into the following token for readability.
 
 ## Preview
 
@@ -15,7 +15,7 @@ The idea came from a Reddit video where someone claimed you can read faster if y
 
 ## What It Does
 
-WordFocus opens text-based documents and displays the content one token at a time in a large, centered reading area. Instead of scanning lines or paragraphs, you keep your attention on a single word on screen while the app advances automatically.
+WordFocus opens text-based documents and displays the content one short chunk at a time in a large, centered reading area. Instead of scanning lines or paragraphs, you keep your attention on a small piece of text on screen while the app advances automatically. Very short words such as two-letter words are combined with the following token.
 
 The app currently supports:
 
@@ -27,9 +27,9 @@ The app currently supports:
 
 ## Features
 
-- Single-word reading interface
+- Short-chunk reading interface
 - Adjustable words per minute
-- Per-word timing scaled by token length from `1x` to `3x`
+- Per-chunk timing scaled by token length from `1x` to `3x`
 - Single-line word display with dynamic font scaling
 - Font family selector, including embedded `OpenDyslexic`
 - Adjustable font size, text color, background color, stroke color, and stroke width
@@ -45,7 +45,7 @@ The app currently supports:
 
 ## Why This Exists
 
-WordFocus is an experiment, not a claim of scientific proof. The goal is to build a usable tool for testing whether isolating one word at a time can improve reading speed, comprehension, or focus.
+WordFocus is an experiment, not a claim of scientific proof. The goal is to build a usable tool for testing whether isolating one short chunk at a time can improve reading speed, comprehension, or focus.
 
 ## Tech Stack
 
