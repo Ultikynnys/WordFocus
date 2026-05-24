@@ -6,6 +6,10 @@ WordFocus is a desktop speed-reading app built with Tauri, React, TypeScript, an
 
 The idea came from a Reddit video where someone claimed you can read faster if you only focus on a single word at a time. This project exists to test that theory in a simple, repeatable way. I am actively using it to see whether those claims actually hold up in practice.
 
+## Preview
+
+![WordFocus showcase](./Images/Showcase.webp)
+
 ## What It Does
 
 WordFocus opens text-based documents and displays the content one token at a time in a large, centered reading area. Instead of scanning lines or paragraphs, you keep your attention on a single word on screen while the app advances automatically.
@@ -32,7 +36,7 @@ The app currently supports:
 - EPUB and PDF text extraction in the desktop backend
 - Cross-platform desktop build output for Windows, Linux, and macOS
 - Console logging for frontend and backend failures
-- GitHub Actions build verification across Windows, Linux, and macOS
+- Manually triggered GitHub Actions build verification across Windows, Linux, and macOS
 
 ## Why This Exists
 
