@@ -1,7 +1,12 @@
 {
-  "name": "one-word-reader",
+  "name": "word-focus",
   "private": true,
   "version": "0.1.0",
+  "homepage": "https://github.com/Ultikynnys/WordFocus",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Ultikynnys/WordFocus.git"
+  },
   "type": "module",
   "scripts": {
     "dev": "vite",

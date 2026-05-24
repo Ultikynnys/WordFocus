@@ -6,7 +6,7 @@ import { fileURLToPath } from "node:url";
 const scriptDir = dirname(fileURLToPath(import.meta.url));
 const projectRoot = dirname(scriptDir);
 const releaseDir = join(projectRoot, "src-tauri", "target", "release");
-const artifactName = process.platform === "win32" ? "one-word-reader.exe" : "one-word-reader";
+const artifactName = process.platform === "win32" ? "word-focus.exe" : "word-focus";
 const artifactPath = join(releaseDir, artifactName);
 
 function fail(message) {

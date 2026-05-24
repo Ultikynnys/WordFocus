@@ -1,14 +1,14 @@
-# Focus
+# WordFocus
 
-[![Build Status](https://github.com/Ultikynnys/OneWordReader/actions/workflows/build.yml/badge.svg)](https://github.com/Ultikynnys/OneWordReader/actions/workflows/build.yml)
+[![Build Status](https://github.com/Ultikynnys/WordFocus/actions/workflows/build.yml/badge.svg)](https://github.com/Ultikynnys/WordFocus/actions/workflows/build.yml)
 
-Focus is a desktop speed-reading experiment built with Tauri, React, TypeScript, and Rust.
+WordFocus is a desktop speed-reading app built with Tauri, React, TypeScript, and Rust.
 
 The idea came from a Reddit video where someone claimed you can read faster if you only focus on a single word at a time. This project exists to test that theory in a simple, repeatable way. I am actively using it to see whether those claims actually hold up in practice.
 
 ## What It Does
 
-Focus opens text-based documents and displays the content one token at a time in a large, centered reading area. Instead of scanning lines or paragraphs, you keep your attention on a single word on screen while the app advances automatically.
+WordFocus opens text-based documents and displays the content one token at a time in a large, centered reading area. Instead of scanning lines or paragraphs, you keep your attention on a single word on screen while the app advances automatically.
 
 The app currently supports:
 
@@ -36,7 +36,7 @@ The app currently supports:
 
 ## Why This Exists
 
-This repository is an experiment, not a claim of scientific proof. The goal is to build a usable tool for testing whether isolating one word at a time can improve reading speed, comprehension, or focus.
+WordFocus is an experiment, not a claim of scientific proof. The goal is to build a usable tool for testing whether isolating one word at a time can improve reading speed, comprehension, or focus.
 
 ## Tech Stack
 
@@ -88,19 +88,13 @@ bun run build:release
 This produces:
 
 ```text
-Windows: src-tauri/target/release/one-word-reader.exe
-Linux:   src-tauri/target/release/one-word-reader
-macOS:   src-tauri/target/release/one-word-reader
-```
-
-On Windows, the existing PowerShell wrapper still works:
-
-```powershell
-powershell -ExecutionPolicy Bypass -File .\build.ps1
+Windows: src-tauri/target/release/word-focus.exe
+Linux:   src-tauri/target/release/word-focus
+macOS:   src-tauri/target/release/word-focus
 ```
 
 ## License
 
-This project is licensed under the MIT License.
+This project is licensed under the MIT License and copyright belongs to Ubeid Hussein.
 
 You are free to use, modify, and distribute it as long as the license text is preserved.

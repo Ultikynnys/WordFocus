@@ -1,10 +1,10 @@
 [package]
-name = "one-word-reader"
+name = "word-focus"
 version = "0.1.0"
 edition = "2021"
 
 [lib]
-name = "one_word_reader_lib"
+name = "word_focus_lib"
 crate-type = ["lib", "cdylib", "staticlib"]
 
 [build-dependencies]

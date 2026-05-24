@@ -1,3 +1,3 @@
 fn main() {
-    one_word_reader_lib::run()
+    word_focus_lib::run()
 }

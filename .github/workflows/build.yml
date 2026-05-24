@@ -4,6 +4,9 @@ on:
   push:
   pull_request:
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 permissions:
   contents: read
 
@@ -14,20 +17,20 @@ jobs:
       matrix:
         include:
           - os: ubuntu-latest
-            artifact_name: one-word-reader-linux
-            artifact_path: src-tauri/target/release/one-word-reader
+            artifact_name: word-focus-linux
+            artifact_path: src-tauri/target/release/word-focus
           - os: windows-latest
-            artifact_name: one-word-reader-windows
-            artifact_path: src-tauri/target/release/one-word-reader.exe
+            artifact_name: word-focus-windows
+            artifact_path: src-tauri/target/release/word-focus.exe
           - os: macos-latest
-            artifact_name: one-word-reader-macos
-            artifact_path: src-tauri/target/release/one-word-reader
+            artifact_name: word-focus-macos
+            artifact_path: src-tauri/target/release/word-focus
 
     runs-on: ${{ matrix.os }}
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Install Linux system dependencies
         if: runner.os == 'Linux'
@@ -61,7 +64,7 @@ jobs:
         run: bun run build:release
 
       - name: Upload release artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: ${{ matrix.artifact_name }}
           path: ${{ matrix.artifact_path }}
