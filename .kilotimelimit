@@ -1,7 +1,0 @@
-# ── Kilo command timeouts (command_prefix timeout_ms) ──
-# First match wins; put more specific patterns first
-bun install 300000
-bun tauri build 600000
-cargo 600000
-powershell 600000
-bun 300000
